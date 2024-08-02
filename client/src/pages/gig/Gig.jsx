@@ -1,10 +1,19 @@
 import React from "react";
 import "./Gig.scss";
-import { Slider } from "infinite-react-carousel/lib";
+import Slider from "react-slick"; // Updated import
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import newRequest from "../../utils/newRequest";
 import Reviews from "../../components/reviews/Reviews";
+
+// Slider settings
+const settings = {
+  dots: true,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 1,
+  slidesToScroll: 1,
+};
 
 function Gig() {
   const { id } = useParams();
@@ -12,9 +21,7 @@ function Gig() {
   const { isLoading, error, data } = useQuery({
     queryKey: ["gig"],
     queryFn: () =>
-      newRequest.get(`/gigs/single/${id}`).then((res) => {
-        return res.data;
-      }),
+      newRequest.get(`/gigs/single/${id}`).then((res) => res.data),
   });
 
   const userId = data?.userId;
@@ -26,9 +33,7 @@ function Gig() {
   } = useQuery({
     queryKey: ["user"],
     queryFn: () =>
-      newRequest.get(`/users/${userId}`).then((res) => {
-        return res.data;
-      }),
+      newRequest.get(`/users/${userId}`).then((res) => res.data),
     enabled: !!userId,
   });
 
@@ -69,9 +74,11 @@ function Gig() {
                 )}
               </div>
             )}
-            <Slider slidesToShow={1} arrowsScroll={1} className="slider">
+            <Slider {...settings} className="slider">
               {data.images.map((img) => (
-                <img key={img} src={img} alt="" />
+                <div key={img}>
+                  <img src={img} alt="" />
+                </div>
               ))}
             </Slider>
             <h2>About This Gig</h2>
@@ -157,7 +164,7 @@ function Gig() {
               ))}
             </div>
             <Link to={`/pay/${id}`}>
-            <button>Continue</button>
+              <button>Continue</button>
             </Link>
           </div>
         </div>
